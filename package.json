@@ -1,0 +1,16 @@
+{
+  "name": "menu-scraper-service",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "playwright:install": "npx playwright install"
+  },
+  "dependencies": {
+    "fastify": "^4.28.1",
+    "openai": "^4.57.0",
+    "playwright": "^1.48.0",
+    "sharp": "^0.33.4"
+  }
+}
