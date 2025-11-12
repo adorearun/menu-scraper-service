@@ -209,13 +209,21 @@ app.post('/extract', {
   }
 }, async (req, reply) => {
   const { url, model='gpt-4o-mini', engine='chromium', geo, headless=true } = req.body;
+  req.log.info({ url, engine, model, geo }, 'extract:start');
   try {
+    req.log.info('extract:render_and_screenshot:start');
     const fullPng = await renderAndScreenshot({ url, engine, headless, geo });
+    req.log.info('extract:render_and_screenshot:done');
+    req.log.info('extract:splitTallPng:start');
     const chunks = await splitTallPng(fullPng, 2800);
+    req.log.info({ chunks: chunks.length }, 'extract:splitTallPng:done');
+    req.log.info('extract:openaiParseImages:start');
     const items = await openaiParseImages(chunks, model);
+    req.log.info({ itemCount: items.length }, 'extract:openaiParseImages:done');
     return reply.send({ items, meta: { chunks: chunks.length, engine, model } });
   } catch (err) {
-    req.log.error(err);
+    req.log.error({ err }, 'extract:error');
+    //req.log.error(err);
     return reply.code(500).send({ error: 'extract_failed', message: String(err?.message || err) });
   }
 });
